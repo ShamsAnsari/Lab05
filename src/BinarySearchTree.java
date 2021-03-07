@@ -1,3 +1,4 @@
+
 /**
  * Lab 5
  *
@@ -7,9 +8,9 @@
  * Prof: Manish Goel
  * Class: CIS22C
  * @Date: 3/4/2021
- *
- *
- * Represents a Binary Search Tree
+ * <p>
+ * <p>
+ * Represents a Binary Search Tree. Element E must implement comparable
  */
 public class BinarySearchTree<E> {
 
@@ -22,42 +23,13 @@ public class BinarySearchTree<E> {
      */
     private int count;
 
-    /**
-     * Constructs a Binary Search Tree with given node as the root
-     *
-     * @param root Root node of this tree
-     */
-    public BinarySearchTree(BinaryTreeNode<E> root) {
-        this.root = root;
-        count++;
-    }
 
     /**
      * Constructs a empty Binary Search Tree
+     *
      */
     public BinarySearchTree() {
 
-    }
-
-    //TODO: print(), deleteSubTree()
-    /**
-     * Searches for Node with given element
-     *
-     * @param element key to search for
-     * @return If node is found, return node, else return null
-     */
-    public BinaryTreeNode<E> search(E element) {
-        BinaryTreeNode<E> cur = root;
-        while (cur != null) {
-            if (cur.getData().equals(element)) {
-                return cur; //Found
-            } else if (((Comparable) element).compareTo(cur.getData()) < 0) {
-                cur = cur.getLeft();
-            } else {
-                cur = cur.getRight();
-            }
-        }
-        return null; //Not found
     }
 
     /**
@@ -151,31 +123,68 @@ public class BinarySearchTree<E> {
     }
 
     /**
-     * Finds the node with the smallest value in the given tree/subtree
+     * Searches for Node with given element
      *
-     * @param node root node of subtree
-     * @return Node if found, else null
+     * @param element key to search for
+     * @return If node is found, return node, else return null
      */
-    public BinaryTreeNode<E> findSmallest(BinaryTreeNode<E> node) {
-        if (node == null) {
-            return null;
+    public BinaryTreeNode<E> search(E element) {
+        BinaryTreeNode<E> cur = root;
+        while (cur != null) {
+            if (cur.getData().equals(element)) {
+                return cur; //Found
+            } else if (((Comparable) element).compareTo(cur.getData()) < 0) {
+                cur = cur.getLeft();
+            } else {
+                cur = cur.getRight();
+            }
         }
-        if (node.getLeft() == null) {
-            return node;
-        }
-
-        return findSmallest(node.getLeft());
+        return null; //Not found
     }
 
     /**
-     * Prints BST in level order using Queue (iterative)
+     * Finds the node with the smallest value in the given tree/subtree
+     *
+     * @param node root node of subtree
+     * @return Smallest element
      */
-    public void levelOrder() {
+    public E smallest(BinaryTreeNode<E> node) {
+        BinaryTreeNode<E> current = node;
+        while (current.getLeft() != null) {
+            current = current.getLeft();
+        }
+        return current.getData();
+    }
+
+    /**
+     * Finds the node with the larget value in the given tree/subtree
+     *
+     * @param node root node of subtree
+     * @return Largest element
+     */
+    public E largest(BinaryTreeNode<E> node) {
+        BinaryTreeNode<E> current = node;
+        while (current.getRight() != null) {
+            current = current.getRight();
+        }
+        return current.getData();
+    }
+
+    /**
+     * Gets the level order traversal (Breadth first search) of the BST iteratively using a queue
+     *
+     * @return Queue E of traversal
+     */
+    public Queue<E> levelOrder() {
+        //Storage Queue, not with use of algorithm
+        Queue<E> traversal = new Queue<>();
+
+        //Queue with use of algorithm
         Queue<BinaryTreeNode<E>> queue = new Queue<>();
         queue.enqueue(root);
         while (!queue.isEmpty()) {
             BinaryTreeNode<E> cur = queue.dequeue();
-            System.out.print(cur.getData() + " ");
+            traversal.enqueue(cur.getData());
             if (cur.getLeft() != null) {
                 queue.enqueue(cur.getLeft());
             }
@@ -183,73 +192,120 @@ public class BinarySearchTree<E> {
                 queue.enqueue(cur.getRight());
             }
         }
+        return traversal;
     }
 
     /**
-     * Prints BST in preorder (recursively)
-     */
-    public void preorder() {
-        preorder(root);
-    }
-
-    /**
-     * Does the recursive work for preorder() function
+     * Gets the pre order traversal of the BST iteratively using a Stack
      *
-     * @param node Current node
+     * @return Queue E of traversal
      */
-    private void preorder(BinaryTreeNode<E> node) {
-        if (node == null) {
-            return;
+    public Queue<E> preorder() {
+        //Storing traversal queue, not with use of algorithm
+        Queue<E> traversal = new Queue<>();
+
+        //Stack with use of algorithm
+        Stack<BinaryTreeNode<E>> stack = new Stack<>();
+        stack.push(root);
+        while (!stack.isEmpty()) {
+            BinaryTreeNode<E> node = stack.pop();
+            traversal.enqueue(node.getData());
+            if (node.getRight() != null) {
+                stack.push(node.getRight());
+            }
+            if (node.getLeft() != null) {
+                stack.push(node.getLeft());
+            }
         }
-        System.out.print(node.getData() + " ");
-        preorder(node.getLeft());
-        preorder(node.getRight());
+        return traversal;
     }
 
     /**
-     * Prints BST in postorder (recursively)
-     */
-    public void postorder() {
-        postorder(root);
-    }
-
-    /**
-     * Does the recursive work for postorder()  function
+     * Gets the post order traversal of the BST recursively
      *
-     * @param node Current node
+     * @return Queue E of traversal
      */
-    private void postorder(BinaryTreeNode<E> node) {
-        if (node == null) {
-            return;
-        }
-
-        postorder(node.getLeft());
-        postorder(node.getRight());
-        System.out.print(node.getData() + " ");
+    public Queue<E> postorder() {
+        Queue<E> traversal = new Queue<>(); // Queue for storing traversal, not with use of algorithm
+        postorder(root, traversal);
+        return traversal;
     }
 
     /**
-     * Prints BST inorder (recursively)
+     * Recursive method for postorder()
+     * @param node current node
+     * @param traversal Queue of traversal
      */
-    public void inorder() {
-        inorder(root);
+    private void postorder(BinaryTreeNode<E> node, Queue<E> traversal) {
+        if (node != null) {
+            postorder(node.getLeft(), traversal);
+            postorder(node.getRight(), traversal);
+            traversal.enqueue(node.getData());
+        }
     }
 
     /**
-     * Does the recursive work for inorder() function
-     * @param node Current node
+     * Gets the inorder traversal of the BST iteratively using a Stack
+     *
+     * @return Queue E of traversal
      */
-    private void inorder(BinaryTreeNode<E> node) {
-        if (node == null) {
-            return;
+    public Queue<E> inorder() {
+        //Storing the traversal, not for use in algorithm
+        Queue<E> traversal = new Queue<>();
+
+        //Stack for use in algorithm
+        Stack<BinaryTreeNode<E>> stack = new Stack<>();
+        BinaryTreeNode<E> curr = root;
+
+        while (curr != null || !stack.isEmpty()) {
+
+            //Reach leftmost node of current node
+            while (curr != null) {
+                stack.push(curr);
+                curr = curr.getLeft();
+            }
+            // curr is always null at this point
+            curr = stack.pop();
+            traversal.enqueue(curr.getData());
+            // At this point: Visited curr node and its left subtree
+            //Now to visit rigt subtree
+            curr = curr.getRight();
         }
-        inorder(node.getLeft());
-        System.out.print(node.getData() + " ");
-        inorder(node.getRight());
+
+        return traversal;
+    }
+
+    /**
+     * Prints all traversal in order specified below
+     * @return string output of traversal in this order: levelorder, preorder, inorder, postorder
+     */
+    public String print() {
+
+        //String[] traversal = {levelOrder(), preorder(), inorder(), postorder()};
+        Queue<E> preorder_traversal = preorder();
+        Queue<E> inorder_traversal = inorder();
+        Queue<E> postorder_traversal = postorder();
+        Queue<E> levelorder_traversal = levelOrder();
+
+        String output = "Level order: " + levelorder_traversal.toString() + "\n"
+                + "Preorder: " + preorder_traversal.toString() + "\n"
+                + "Inorder: " + inorder_traversal.toString() + "\n"
+                + "Postorder: " + postorder_traversal.toString() + "\n";
+        System.out.print(output);
+        return output;
+
+    }
+
+    /**
+     * Clears tree
+     */
+    public void clear() {
+        root = null;
     }
 
     /**
      * Checks if the BST is empty
+     *
      * @return True if the BST is empty, false otherwise
      */
     public boolean isEmpty() {
@@ -258,6 +314,7 @@ public class BinarySearchTree<E> {
 
     /**
      * Size of BST
+     *
      * @return Number of elements in BST
      */
     public int getCount() {
@@ -265,10 +322,17 @@ public class BinarySearchTree<E> {
     }
 
     /**
-     *
      * @return Root of BST
      */
     public BinaryTreeNode<E> getRoot() {
         return root;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public String toString() {
+        return preorder().toString();
     }
 }

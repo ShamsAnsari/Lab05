@@ -101,4 +101,8 @@ public class BinaryTreeNode<E> {
         this.left = left;
     }
 
+    @Override
+    public String toString(){
+        return data.toString();
+    }
 }
