@@ -66,6 +66,39 @@ public class BinarySearchTree<E extends Comparable<E>> {
 
     /**
      * Removes the element from the binary tree
+     * <p>
+     *  Pseudo code for if/when node found:
+     * ------ if node is leaf node
+     * ---------- if node is root node
+     * -------------- root = null
+     * ---------- else if node is left node of parent
+     * -------------- set parent's left node to null
+     * ---------- else
+     * -------------- set parent's right node to null
+     *
+     * ------ else if node has only left child
+     * ---------- if node is root node
+     * -------------- root = null
+     * ----------- else if node is left node of parent
+     * -------------- set parent's left to node's left
+     * ----------- else node is right node of parent
+     * -------------- set parent's right to node's left
+     *
+     * ------ else if node has only right child
+     * ---------- if node is root node
+     * -------------- root = null
+     * ----------- else if node is left node of parent
+     * -------------- set parent's left to node's right
+     * ----------- else node is right node of parent
+     * -------------- set parent's right to node's right
+     *
+     * ------ else remove node with 2 children
+     * ---------- find the leftmost child of right subtree
+     * ---------- copy successor data
+     * ---------- recursively remove successor node
+     * ---------- set node to successor data
+     * ------ decrement count
+     *
      *
      * @param element Element to remove
      */
@@ -73,13 +106,13 @@ public class BinarySearchTree<E extends Comparable<E>> {
         BinaryTreeNode<E> parent = null;
         BinaryTreeNode<E> curr = root;
         while (curr != null) { // Search Node
-            if (curr.getData().compareTo(element) == 0) { // Node found
+            if (curr.getData().compareTo(element) == 0) { // Node found, see pseudocode
                 if (curr.getLeft() == null && curr.getRight() == null) { // Remove leaf
                     if (parent == null) { //Node is root
                         root = null;
-                    } else if (parent.getLeft() == curr) {
+                    } else if (parent.getLeft() == curr) { // Parent's left node
                         parent.setLeft(null);
-                    } else {
+                    } else { // Parent's right node
                         parent.setRight(null);
                     }
                 } else if (curr.getRight() == null) { //Remove node with only left child
@@ -177,13 +210,16 @@ public class BinarySearchTree<E extends Comparable<E>> {
     public Queue<E> levelOrder() {
         //Storage Queue, not with use of algorithm
         Queue<E> traversal = new Queue<>();
-
+        if (root == null) {
+            return traversal;
+        }
         //Queue with use of algorithm
         Queue<BinaryTreeNode<E>> queue = new Queue<>();
         queue.enqueue(root);
         while (!queue.isEmpty()) {
             BinaryTreeNode<E> cur = queue.dequeue();
-            traversal.enqueue(cur.getData());
+            traversal.enqueue(cur.getData()); // put node in queue
+
             if (cur.getLeft() != null) {
                 queue.enqueue(cur.getLeft());
             }
@@ -202,7 +238,9 @@ public class BinarySearchTree<E extends Comparable<E>> {
     public Queue<E> preorder() {
         //Storing traversal queue, not with use of algorithm
         Queue<E> traversal = new Queue<>();
-
+        if (root == null) {
+            return traversal;
+        }
         //Stack with use of algorithm
         Stack<BinaryTreeNode<E>> stack = new Stack<>();
         stack.push(root);
@@ -278,7 +316,7 @@ public class BinarySearchTree<E extends Comparable<E>> {
     /**
      * Prints all traversal in order specified below
      *
-     * @return string output of traversal in this order: levelorder, preorder, inorder, postorder
+     * @return string output of traversal in this order: level order, inorder, preorder, postorder
      */
     public String print() {
 
@@ -289,8 +327,8 @@ public class BinarySearchTree<E extends Comparable<E>> {
         Queue<E> levelorder_traversal = levelOrder();
 
         String output = "Level order: " + levelorder_traversal.toString() + "\n"
-                + "Preorder: " + preorder_traversal.toString() + "\n"
                 + "Inorder: " + inorder_traversal.toString() + "\n"
+                + "Preorder: " + preorder_traversal.toString() + "\n"
                 + "Postorder: " + postorder_traversal.toString() + "\n";
         System.out.print(output);
         return output;
@@ -330,13 +368,14 @@ public class BinarySearchTree<E extends Comparable<E>> {
     }
 
     /**
-     * Adapted from https://stackoverflow.com/a/27153988/10200349 To work for binary search tree
-     * and this specific classes
-     * @param prefix
-     * @param isTail
-     * @param sb
-     * @param node
-     * @return
+     * Adapted from https://stackoverflow.com/a/27153988/10200349 To work for binary search tree and my specific classes.
+     *
+     * @param prefix  the path to node ex: |, └──, ┌──, (edge)
+     *
+     * @param isTail  for recursion, a type of edge (|)
+     * @param sb the current tree
+     * @param node the current node
+     * @return A 2D representation of the tree
      */
     private StringBuilder toString2D(StringBuilder prefix, boolean isTail, StringBuilder sb, BinaryTreeNode<E> node) {
         if (node.getRight() != null) {
@@ -350,10 +389,14 @@ public class BinarySearchTree<E extends Comparable<E>> {
     }
 
     /**
-     * @return
+     * Converts tree to string
+     * @return A 2D string representation of tree (Horizontal)
      */
     @Override
     public String toString() {
+        if (root == null) {
+            return null;
+        }
         return toString2D(new StringBuilder(), true, new StringBuilder(), root).toString();
 
     }

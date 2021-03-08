@@ -101,6 +101,10 @@ public class BinaryTreeNode<E> {
         this.left = left;
     }
 
+    /**
+     * Converts node to string
+     * @return The data as a string
+     */
     @Override
     public String toString(){
         return data.toString();

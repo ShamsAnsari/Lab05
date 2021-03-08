@@ -5,8 +5,17 @@ import java.util.Scanner;
 
 public class Lab5Main {
     final static String FILE_PATH = "output.txt";
+    final static double MINIMUM_DOLLAR = 0.01;
+    final static double MAXIMUM_DOLLAR = Double.MAX_VALUE;
 
-
+    /**
+     * 1. initialize output file
+     * 2. Create BST
+     * 3. seed BST with data
+     * 4. Run main loop
+     *
+     * @param args
+     */
     public static void main(String[] args) {
         //Create Output.txt file
         initFile();
@@ -15,7 +24,7 @@ public class Lab5Main {
         BinarySearchTree<USD> binarySearchTree = new BinarySearchTree<>();
 
         //Seed BST
-        double[] seed = {23, 18, 12, 20, 44, 35, 52, 17.99, 0.01, 25, 50, 39.1};
+        double[] seed = {23, 18, 12, 20, 44, 35, 52, 17.99, 0.01, 25.5, 50, 39.1};
         for (double input : seed) {
             USD dollar = new USD((int) input, (int) Math.round(input * 100 % 100), "USD");
             binarySearchTree.insert(dollar);
@@ -29,13 +38,14 @@ public class Lab5Main {
            - if input == 1 // print the traversals
            - if input == 2 // print the tree in 2d form
            - if input == 3 // insert a node
-           ---- get value of dollar from user
+           ---- get value of dollar from user and validate
            ---- insert dollar into tree
            - if input == 4 // remove a node
-           ---- get value of dollar from user
+           ---- get value of dollar from user and validate
            ---- remove that value from tree
            - if input == 5 // clear tree
            - if input == 6 // search for a node
+           ---- get value of dollar from user and validate
            ---- search node
            ---- print node and its children
            - if input == 7 // exit Main loop
@@ -50,29 +60,37 @@ public class Lab5Main {
                     break;
                 case 2: //print2D()
                     String twoD = binarySearchTree.toString();
-                    System.out.print(twoD);
+                    System.out.println(twoD);
                     write(twoD + "\n");
                     break;
                 case 3: // insert(E)
-                    double input = getElementFromUser(0.009, Double.MAX_VALUE, "\tNode = ");
-                    USD dollar = new USD((int) input, (int) Math.round(input * 100 % 100), "USD");
-                    binarySearchTree.insert(dollar);
+                    USD dollar = getElementFromUser();
+                    if (dollar != null) {
+                        binarySearchTree.insert(dollar);
+                    }
                     break;
                 case 4: // remove(E)
-                    input = getElementFromUser(0.009, Double.MAX_VALUE, "\tNode = ");
-                    dollar = new USD((int) input, (int) Math.round(input * 100 % 100), "USD");
-                    binarySearchTree.remove(dollar);
+                    dollar = getElementFromUser();
+                    if (dollar != null) {
+                        binarySearchTree.remove(dollar);
+                    }
                     break;
                 case 5://clear()
                     binarySearchTree.clear();
                     break;
                 case 6:// search(E)
-                    input = getElementFromUser(0.009, Double.MAX_VALUE, "\tNode = ");
-                    dollar = new USD((int) input, (int) Math.round(input * 100 % 100), "USD");
-                    BinaryTreeNode<USD> node = binarySearchTree.search(dollar);
-                    BinaryTreeNode<USD> left_node = (node.getLeft() == null) ? null : node.getLeft();
-                    BinaryTreeNode<USD> right_node = (node.getRight() == null) ? null : node.getRight();
-                    System.out.println("Data:" + node + "Left:" + left_node + "Right: " + right_node);
+                    dollar = getElementFromUser();
+                    if (dollar != null) {
+                        BinaryTreeNode<USD> node = binarySearchTree.search(dollar);
+                        if (node != null) {
+                            BinaryTreeNode<USD> left_node = (node.getLeft() == null) ? null : node.getLeft();
+                            BinaryTreeNode<USD> right_node = (node.getRight() == null) ? null : node.getRight();
+                            System.out.println("Data: " + node + " Left: " + left_node + " Right: " + right_node);
+                        } else {
+                            System.out.println(node);
+                        }
+                    }
+
                     break;
                 case 7:// exit()
                     break mainLoop;
@@ -83,6 +101,9 @@ public class Lab5Main {
 
     }
 
+    /**
+     * Initializes output file.
+     */
     public static void initFile() {
         File output = new File(FILE_PATH);
         try {
@@ -109,7 +130,7 @@ public class Lab5Main {
     }
 
     /**
-     * Write obj to both console and to and output file
+     * Write obj  to output file
      * Output file path is "FILE_PATH" variable
      * Appends to file
      *
@@ -156,25 +177,28 @@ public class Lab5Main {
 
 
     /**
-     * @param lowerBound Lower bound of input (Exclusive)
-     * @param upperBound upper bound of input (inclusive
-     * @param msg        message before  user enter input
-     * @return user input
+     * Gets a dollar(USD) element from user
+     * If dollar is negative or not in range, then ignore and returns null
+     *
+     * @return
      */
-    public static double getElementFromUser(double lowerBound, double upperBound, String msg) {
+    public static USD getElementFromUser() {
 
+        String msg = "\tNode = ";
         Scanner scan = new Scanner(System.in);
 
         double input;
         System.out.print(msg);
         input = scan.nextDouble();
-        if (!(input <= upperBound && input > lowerBound)) {
-            String errorMsg = "\tBounds of input: [" + lowerBound + ", " + upperBound + "] -- IGNORE: " + input + "\n";
+
+        USD dollar = null;
+        if (!(input <= MAXIMUM_DOLLAR && input > MINIMUM_DOLLAR)) {
+            String errorMsg = "\tBounds of input: [" + MINIMUM_DOLLAR + ", " + MAXIMUM_DOLLAR + "] -- IGNORE: " + input + "\n";
             write(errorMsg);
             System.out.print(errorMsg);
-
+        } else {
+            dollar = new USD((int) input, (int) Math.round(input * 100 % 100), "USD");
         }
-        return input;
-
+        return dollar;
     }
 }
