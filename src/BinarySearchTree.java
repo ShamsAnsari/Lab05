@@ -12,21 +12,20 @@
  * <p>
  * Represents a Binary Search Tree. Element E must implement comparable
  */
-public class BinarySearchTree<E> {
+public class BinarySearchTree<E extends Comparable<E>> {
 
     /**
      * Root node of this tree
      */
     private BinaryTreeNode<E> root;
+
     /**
      * Number of elements in this tree
      */
     private int count;
 
-
     /**
      * Constructs a empty Binary Search Tree
-     *
      */
     public BinarySearchTree() {
 
@@ -44,7 +43,7 @@ public class BinarySearchTree<E> {
         } else {
             BinaryTreeNode<E> currentNode = root;
             while (currentNode != null) {
-                if (((Comparable) node.getData()).compareTo(currentNode.getData()) < 0) {
+                if (node.getData().compareTo(currentNode.getData()) < 0) {
                     if (currentNode.getLeft() == null) {
                         currentNode.setLeft(node);
                         currentNode = null;
@@ -74,7 +73,7 @@ public class BinarySearchTree<E> {
         BinaryTreeNode<E> parent = null;
         BinaryTreeNode<E> curr = root;
         while (curr != null) { // Search Node
-            if (curr.getData().equals(element)) { // Node found
+            if (curr.getData().compareTo(element) == 0) { // Node found
                 if (curr.getLeft() == null && curr.getRight() == null) { // Remove leaf
                     if (parent == null) { //Node is root
                         root = null;
@@ -110,7 +109,7 @@ public class BinarySearchTree<E> {
                 }
                 count--;
                 return; //Node found and removed
-            } else if (((Comparable) curr.getData()).compareTo(element) < 0) {
+            } else if (curr.getData().compareTo(element) < 0) {
                 parent = curr;
                 curr = curr.getRight();
             } else {
@@ -131,9 +130,9 @@ public class BinarySearchTree<E> {
     public BinaryTreeNode<E> search(E element) {
         BinaryTreeNode<E> cur = root;
         while (cur != null) {
-            if (cur.getData().equals(element)) {
+            if (cur.getData().compareTo(element) == 0) {
                 return cur; //Found
-            } else if (((Comparable) element).compareTo(cur.getData()) < 0) {
+            } else if (element.compareTo(cur.getData()) < 0) {
                 cur = cur.getLeft();
             } else {
                 cur = cur.getRight();
@@ -233,7 +232,8 @@ public class BinarySearchTree<E> {
 
     /**
      * Recursive method for postorder()
-     * @param node current node
+     *
+     * @param node      current node
      * @param traversal Queue of traversal
      */
     private void postorder(BinaryTreeNode<E> node, Queue<E> traversal) {
@@ -277,6 +277,7 @@ public class BinarySearchTree<E> {
 
     /**
      * Prints all traversal in order specified below
+     *
      * @return string output of traversal in this order: levelorder, preorder, inorder, postorder
      */
     public String print() {
@@ -329,10 +330,32 @@ public class BinarySearchTree<E> {
     }
 
     /**
+     * Adapted from https://stackoverflow.com/a/27153988/10200349 To work for binary search tree
+     * and this specific classes
+     * @param prefix
+     * @param isTail
+     * @param sb
+     * @param node
+     * @return
+     */
+    private StringBuilder toString2D(StringBuilder prefix, boolean isTail, StringBuilder sb, BinaryTreeNode<E> node) {
+        if (node.getRight() != null) {
+            toString2D(new StringBuilder().append(prefix).append(isTail ? "│   " : "    "), false, sb, node.getRight());
+        }
+        sb.append(prefix).append(isTail ? "└── " : "┌── ").append(node.getData().toString()).append("\n");
+        if (node.getLeft() != null) {
+            toString2D(new StringBuilder().append(prefix).append(isTail ? "    " : "│   "), true, sb, node.getLeft());
+        }
+        return sb;
+    }
+
+    /**
      * @return
      */
     @Override
     public String toString() {
-        return preorder().toString();
+        return toString2D(new StringBuilder(), true, new StringBuilder(), root).toString();
+
     }
+
 }

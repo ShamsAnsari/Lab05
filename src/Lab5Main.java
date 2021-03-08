@@ -5,48 +5,76 @@ import java.util.Scanner;
 
 public class Lab5Main {
     final static String FILE_PATH = "output.txt";
-    final static int MIN_NUM_ELEMENTS = 7;
+
 
     public static void main(String[] args) {
         //Create Output.txt file
-        File output = new File(FILE_PATH);
-        try {
-            output.createNewFile();
-            new FileWriter(FILE_PATH, false).close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        initFile();
 
+        //Create BST
         BinarySearchTree<USD> binarySearchTree = new BinarySearchTree<>();
 
-        int numElements = getUserInput(MIN_NUM_ELEMENTS, Integer.MAX_VALUE - 1, "Enter number of elements: ");
-
-        //Get data for array from user
-        write("Enter money in form: X.XX\n");
-        for (int i = 0; i < numElements; i++) {
-            //Money has to be at least 1 cent
-            double input = getElementFromUser(0.009, Double.MAX_VALUE, "\tInsertion = ");
-            // Note:cents part, rounding needed because 19.99 * 100 % 100 = .98.  Precision error
+        //Seed BST
+        double[] seed = {23, 18, 12, 20, 44, 35, 52, 17.99, 0.01, 25, 50, 39.1};
+        for (double input : seed) {
             USD dollar = new USD((int) input, (int) Math.round(input * 100 % 100), "USD");
             binarySearchTree.insert(dollar);
         }
 
-
+        /*
+        Main Loop
+           1. print menu
+           2. get user input [1 to 7]
+           based of user input:
+           - if input == 1 // print the traversals
+           - if input == 2 // print the tree in 2d form
+           - if input == 3 // insert a node
+           ---- get value of dollar from user
+           ---- insert dollar into tree
+           - if input == 4 // remove a node
+           ---- get value of dollar from user
+           ---- remove that value from tree
+           - if input == 5 // clear tree
+           - if input == 6 // search for a node
+           ---- search node
+           ---- print node and its children
+           - if input == 7 // exit Main loop
+         */
         mainLoop:
         while (true) {
             printMainMenu();
-            int choice = getUserInput(1, 5, "");
+            int choice = getUserInput(1, 7, "");
             switch (choice) {
-                case 1:
-                    binarySearchTree.print();
+                case 1:// print()
+                    write(binarySearchTree.print() + "\n");
                     break;
-                case 2:
+                case 2: //print2D()
+                    String twoD = binarySearchTree.toString();
+                    System.out.print(twoD);
+                    write(twoD + "\n");
                     break;
-                case 3:
+                case 3: // insert(E)
+                    double input = getElementFromUser(0.009, Double.MAX_VALUE, "\tNode = ");
+                    USD dollar = new USD((int) input, (int) Math.round(input * 100 % 100), "USD");
+                    binarySearchTree.insert(dollar);
                     break;
-                case 4:
+                case 4: // remove(E)
+                    input = getElementFromUser(0.009, Double.MAX_VALUE, "\tNode = ");
+                    dollar = new USD((int) input, (int) Math.round(input * 100 % 100), "USD");
+                    binarySearchTree.remove(dollar);
                     break;
-                case 5:
+                case 5://clear()
+                    binarySearchTree.clear();
+                    break;
+                case 6:// search(E)
+                    input = getElementFromUser(0.009, Double.MAX_VALUE, "\tNode = ");
+                    dollar = new USD((int) input, (int) Math.round(input * 100 % 100), "USD");
+                    BinaryTreeNode<USD> node = binarySearchTree.search(dollar);
+                    BinaryTreeNode<USD> left_node = (node.getLeft() == null) ? null : node.getLeft();
+                    BinaryTreeNode<USD> right_node = (node.getRight() == null) ? null : node.getRight();
+                    System.out.println("Data:" + node + "Left:" + left_node + "Right: " + right_node);
+                    break;
+                case 7:// exit()
                     break mainLoop;
 
             }
@@ -55,16 +83,28 @@ public class Lab5Main {
 
     }
 
+    public static void initFile() {
+        File output = new File(FILE_PATH);
+        try {
+            output.createNewFile();
+            new FileWriter(FILE_PATH, false).close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * prints main menu with input message
      */
     public static void printMainMenu() {
         System.out.print("Main menu\n" +
                 "\t1 - print()\n" +
-                "\t2 - insert(E)\n" +
-                "\t3 - remove(E)\n" +
-                "\t4 - search(E)\n" +
-                "\t5 - Exit\n" +
+                "\t2 - print2D()\n" +
+                "\t3 - insert(E)\n" +
+                "\t4 - remove(E)\n" +
+                "\t5 - clear()\n" +
+                "\t6 - search(E)\n" +
+                "\t7 - Exit\n" +
                 "Enter a choice: ");
     }
 
@@ -86,8 +126,6 @@ public class Lab5Main {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        System.out.print(obj);
 
     }
 
@@ -131,7 +169,9 @@ public class Lab5Main {
         System.out.print(msg);
         input = scan.nextDouble();
         if (!(input <= upperBound && input > lowerBound)) {
-            write("\tBounds of input: [" + lowerBound + ", " + upperBound + "] -- IGNORE: " + input + "\n");
+            String errorMsg = "\tBounds of input: [" + lowerBound + ", " + upperBound + "] -- IGNORE: " + input + "\n";
+            write(errorMsg);
+            System.out.print(errorMsg);
 
         }
         return input;
