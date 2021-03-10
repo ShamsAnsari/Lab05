@@ -1,6 +1,7 @@
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Lab5Main {
@@ -66,6 +67,12 @@ public class Lab5Main {
                 case 3: // insert(E)
                     USD dollar = getElementFromUser();
                     if (dollar != null) {
+                        if(binarySearchTree.search(dollar) != null){
+                            String errorMsg = "\tIGNORE: \"" + dollar + "\" REASON: Duplicate\n";
+                            write(errorMsg);
+                            System.out.print(errorMsg);
+                        }
+                        // Binary tree will handle duplicate
                         binarySearchTree.insert(dollar);
                     }
                     break;
@@ -162,7 +169,8 @@ public class Lab5Main {
 
         Scanner scan = new Scanner(System.in);
 
-        int input;
+        int input = 0;
+        A:
         while (true) {
             System.out.print(msg);
             input = scan.nextInt();
@@ -170,6 +178,7 @@ public class Lab5Main {
                 break;
             }
             System.out.print("\tBounds of input: [" + lowerBound + ", " + upperBound + "]\n");
+
         }
         return input;
 
@@ -187,13 +196,21 @@ public class Lab5Main {
         String msg = "\tNode = ";
         Scanner scan = new Scanner(System.in);
 
-        double input;
+        double input = 0;
         System.out.print(msg);
-        input = scan.nextDouble();
+        String line = scan.next();
+        try {
+            input = Double.parseDouble(line);
+        } catch (Exception e){
+            String errorMsg = "\tIGNORE: \"" + line + "\" REASON: Not a number\n";
+            write(errorMsg);
+            System.out.print(errorMsg);
+            return null;
+        }
 
         USD dollar = null;
         if (!(input <= MAXIMUM_DOLLAR && input > MINIMUM_DOLLAR)) {
-            String errorMsg = "\tBounds of input: [" + MINIMUM_DOLLAR + ", " + MAXIMUM_DOLLAR + "] -- IGNORE: " + input + "\n";
+            String errorMsg = "\tIGNORE: " + input + " REASON: Bounds of input: [" + MINIMUM_DOLLAR + ", " + MAXIMUM_DOLLAR + "]\n";
             write(errorMsg);
             System.out.print(errorMsg);
         } else {

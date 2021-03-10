@@ -37,6 +37,10 @@ public class BinarySearchTree<E extends Comparable<E>> {
      * @param element element to insert
      */
     public void insert(E element) {
+
+        if(search(element) != null){
+            return;
+        }
         BinaryTreeNode<E> node = new BinaryTreeNode<>(element);
         if (root == null) {
             root = node;
