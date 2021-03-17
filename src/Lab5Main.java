@@ -4,6 +4,11 @@ import java.io.IOException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+/**
+ * Lab 5
+ * @author  Shams Ansari
+ * TO learn and implement Binary Search Trees and their traversal methods
+ */
 public class Lab5Main {
     final static String FILE_PATH = "output.txt";
     final static double MINIMUM_DOLLAR = 0.01;
@@ -67,11 +72,6 @@ public class Lab5Main {
                 case 3: // insert(E)
                     USD dollar = getElementFromUser();
                     if (dollar != null) {
-                        if(binarySearchTree.search(dollar) != null){
-                            String errorMsg = "\tIGNORE: \"" + dollar + "\" REASON: Duplicate\n";
-                            write(errorMsg);
-                            System.out.print(errorMsg);
-                        }
                         // Binary tree will handle duplicate
                         binarySearchTree.insert(dollar);
                     }

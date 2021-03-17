@@ -32,19 +32,18 @@ public class BinarySearchTree<E extends Comparable<E>> {
     }
 
     /**
-     * Inserts the given element into the BST
-     *
+     * Inserts the given element into the BST.
+     * No balancing of any sorts.
      * @param element element to insert
      */
     public void insert(E element) {
 
-        if(search(element) != null){
-            return;
-        }
+
         BinaryTreeNode<E> node = new BinaryTreeNode<>(element);
+        // Tree is empty
         if (root == null) {
             root = node;
-        } else {
+        } else { // Tree is not empty
             BinaryTreeNode<E> currentNode = root;
             while (currentNode != null) {
                 if (node.getData().compareTo(currentNode.getData()) < 0) {
@@ -288,6 +287,13 @@ public class BinarySearchTree<E extends Comparable<E>> {
 
     /**
      * Gets the inorder traversal of the BST iteratively using a Stack
+     *
+     * 1. Create stack
+     * 2. init current as root
+     * 3. while curr not null and stack is not empty
+     * 3a: pop from stack
+     * 3b:print popped item, set curr = popped item.left
+     * 4. return traversal or none if printing
      *
      * @return Queue E of traversal
      */
